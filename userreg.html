@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TurfKick - User Registration</title>
+
+<style>
+
+/* BODY */
+body{
+margin:0;
+font-family:'Segoe UI';
+background: 
+linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+url('turf.png') no-repeat center/cover;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* MAIN WRAPPER */
+.wrapper{
+width:900px;
+height:520px;
+display:flex;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+
+/* LEFT IMAGE */
+.left{
+width:50%;
+background:url('https://images.unsplash.com/photo-1517649763962-0c623066013b') center/cover;
+position:relative;
+}
+
+/* DARK OVERLAY */
+.left::after{
+content:'';
+position:absolute;
+width:100%;
+height:100%;
+background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
+}
+
+/* TEXT ON IMAGE */
+.left::before{
+content:"Play. Book. Enjoy.";
+position:absolute;
+bottom:25px;
+left:25px;
+font-size:24px;
+font-weight:bold;
+z-index:2;
+letter-spacing:1px;
+}
+
+/* RIGHT FORM */
+.right{
+width:50%;
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(25px);
+padding:40px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+/* TITLE */
+h2{
+text-align:center;
+margin-bottom:25px;
+letter-spacing:1px;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:12px;
+border:none;
+outline:none;
+background: rgba(255,255,255,0.2);
+color:white;
+font-size:14px;
+}
+
+input::placeholder{
+color:#ddd;
+}
+
+/* BUTTON */
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+border-radius:25px;
+border:none;
+background:#00ffb3;
+color:#003b2e;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+font-size:15px;
+}
+
+button:hover{
+background:#00cc8f;
+transform:scale(1.03);
+}
+
+/* BACK */
+.back{
+text-align:center;
+margin-top:15px;
+cursor:pointer;
+opacity:0.8;
+font-size:14px;
+}
+
+.back:hover{
+opacity:1;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-thumb {
+background: linear-gradient(135deg,#1f4037,#99f2c8);
+border-radius: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<!-- LEFT IMAGE -->
+<div class="left"></div>
+
+<!-- RIGHT FORM -->
+<div class="right">
+
+<h2>User Registration</h2>
+
+<form onsubmit="return validateForm()">
+
+<input type="text" placeholder="Name" required>
+
+<input type="text" placeholder="Phone or Email" required>
+
+<input type="password" id="pass" placeholder="Create Password" required>
+
+<input type="password" id="repass" placeholder="Retype Password" required>
+
+<button type="submit">Register</button>
+
+</form>
+
+<div class="back" onclick="goBack()">← Back to Login</div>
+
+</div>
+
+</div>
+
+<script>
+
+function goBack(){
+window.location.href = "index.html";
+}
+
+/* PASSWORD VALIDATION */
+function validateForm(){
+let p = document.getElementById("pass").value;
+let rp = document.getElementById("repass").value;
+
+if(p !== rp){
+alert("Passwords do not match!");
+return false;
+}
+
+if(p.length < 6){
+alert("Password must be at least 6 characters");
+return false;
+}
+
+return true;
+}
+
+</script>
+
+</body>
+</html>
