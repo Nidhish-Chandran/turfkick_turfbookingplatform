@@ -1,58 +1,388 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Browse Turfs</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TurfKick</title>
+    <style>
+        :root {
+            --primary: #1f4037;
+            --secondary: #99f2c8;
+            --accent: #ffd700;
+            --danger: #ff5f6d;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
 
-<style>
-body{
-font-family:Arial;
-background:#f4f6f9;
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1f4037, #2c5364, #0f2027);
+            background-attachment: fixed;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-.container{
-width:80%;
-margin:auto;
-}
+        /* NAVBAR */
+        .navbar {
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 5%; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(25px); border-bottom: 1px solid var(--border);
+        }
 
-.turf{
-background:white;
-padding:20px;
-margin:20px;
-border-radius:8px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
+        .logo { font-size: 24px; font-weight: 900; background: linear-gradient(to right, #fff, var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+        .nav-right { display: flex; gap: 15px; align-items: center; }
+        .nav-item { padding: 8px 15px; border-radius: 12px; cursor: pointer; background: var(--glass); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: var(--transition); border: 1px solid transparent; }
+        .nav-item:hover { background: rgba(255,255,255,0.15); border-color: var(--border); }
+        .user-profile { width: 38px; height: 38px; border-radius: 10px; background: var(--secondary); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; }
 
-button{
-background:#3498db;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:5px;
-}
-</style>
+        /* SEARCH & HERO */
+        .hero { padding: 40px 5% 20px; text-align: center; }
+        .search-container { max-width: 650px; margin: 25px auto; position: relative; }
+        .search-container input { width: 100%; padding: 16px 30px; border-radius: 50px; border: 1px solid var(--border); background: var(--glass); color: #fff; font-size: 16px; outline: none; transition: var(--transition); box-sizing: border-box; }
+        .search-container input:focus { background: rgba(255,255,255,0.12); box-shadow: 0 0 20px rgba(153, 242, 200, 0.1); }
+
+        .filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 20px; border-radius: 50px; border: 1px solid var(--border); background: var(--glass); color: #fff; cursor: pointer; transition: 0.3s; font-size: 13px; }
+        .filter-btn.active { background: #fff; color: var(--primary); font-weight: 700; }
+
+        /* LISTINGS GRID */
+        .container { width: 90%; max-width: 1300px; margin: 0 auto 80px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 25px; overflow: hidden; border: 1px solid var(--border); transition: var(--transition); cursor: pointer; }
+        .card:hover { transform: translateY(-10px); border-color: #fff; }
+        .card-img { height: 180px; overflow: hidden; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover img { transform: scale(1.1); }
+        .card-body { padding: 20px; }
+        .card-price { margin-top: 15px; font-weight: 800; color: var(--secondary); font-size: 1.1rem; }
+
+        /* HORIZONTAL MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.3s; }
+        .modal.active { display: flex; opacity: 1; }
+        .modal-content { width: 95%; max-width: 950px; background: #1a1a1a; border-radius: 30px; border: 1px solid var(--border); display: flex; overflow: hidden; transform: scale(0.9); transition: 0.4s; position: relative; }
+        .modal.active .modal-content { transform: scale(1); }
+        .modal-left { width: 45%; background-size: cover; background-position: center; }
+        .modal-right { width: 55%; padding: 35px; overflow-y: auto; max-height: 85vh; }
+        .modal-close { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; font-size: 20px; }
+
+        /* UI ELEMENTS */
+        .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .slot { padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--border); cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .slot.selected { background: var(--secondary); color: var(--primary); font-weight: 700; }
+        .slot.booked { opacity: 0.2; cursor: not-allowed; }
+
+        .acc-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border); }
+        
+        .tag { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .tag-upcoming { background: #3498db33; color: #3498db; }
+        .tag-completed { background: #2ecc7133; color: #2ecc71; }
+
+        .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; transition: var(--transition); margin-top: 15px; }
+        .btn-main { background: var(--secondary); color: var(--primary); }
+        .btn-outline { background: transparent; border: 1px solid #fff; color: #fff; }
+        .btn-disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+        .stars { display: flex; gap: 5px; margin: 10px 0; font-size: 22px; cursor: pointer; color: rgba(255,255,255,0.1); }
+        .star.active { color: var(--accent); }
+
+        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; }
+
+        @media (max-width: 850px) {
+            .modal-content { flex-direction: column; height: 90vh; }
+            .modal-left { width: 100%; height: 180px; }
+            .modal-right { width: 100%; padding: 25px; }
+        }
+    </style>
 </head>
-
 <body>
 
-<h2 style="text-align:center">Available Turfs</h2>
+    <nav class="navbar">
+        <div class="logo" onclick="location.reload()">TurfKick</div>
+        <div class="nav-right">
+            <div class="nav-item" onclick="openModal('historyModal')"><span>📅</span> My History</div>
+            <div class="nav-item" onclick="openModal('reviewHistoryModal')"><span>⭐</span> Reviews</div>
+            <div class="user-profile" onclick="openModal('profileModal')">JD</div>
+        </div>
+    </nav>
 
-<div class="container">
+    <header class="hero">
+        <h1 style="font-size: 2.2rem; font-weight: 900; margin: 0;">Welcome Back, John!</h1>
+        <p style="opacity: 0.7; margin-bottom: 25px;">Find and book verified turfs instantly.</p>
+        
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search by name, city, or sport..." onkeyup="renderTurfs()">
+        </div>
 
-<div class="turf">
-<h3>City Football Turf</h3>
-<p>Location: Kochi</p>
-<p>Price: ₹1200 / hour</p>
-<button>View Slots</button>
-</div>
+        <div class="filters">
+            <button class="filter-btn active" onclick="setFilter('all', this)">All Sports</button>
+            <button class="filter-btn" onclick="setFilter('Football', this)">Football</button>
+            <button class="filter-btn" onclick="setFilter('Cricket', this)">Cricket</button>
+            <button class="filter-btn" onclick="setFilter('top', this)">Top Rated</button>
+        </div>
+    </header>
 
-<div class="turf">
-<h3>Green Arena</h3>
-<p>Location: Trivandrum</p>
-<p>Price: ₹1000 / hour</p>
-<button>View Slots</button>
-</div>
+    <main class="container" id="listings">
+        <!-- Turfs injected here -->
+    </main>
 
-</div>
+    <!-- HORIZONTAL TURF MODAL -->
+    <div class="modal" id="turfModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('turfModal')">&times;</div>
+            <div class="modal-left" id="modalImg"></div>
+            <div class="modal-right">
+                <h2 id="modalName" style="margin:0;"></h2>
+                <p id="modalLoc" style="opacity: 0.6; margin: 5px 0; font-size: 14px;"></p>
+                <div id="modalRating" style="color: var(--accent); font-weight: bold; font-size: 14px;"></div>
 
+                <div id="bookingContext">
+                    <h4 style="margin-bottom: 8px; margin-top: 20px;">Available Slots</h4>
+                    <div class="slots" id="modalSlots"></div>
+
+                    <h4 style="margin-top: 20px; margin-bottom: 8px;">Rent Equipment</h4>
+                    <div id="accStore">
+                        <div class="acc-item">
+                            <span>⚽ Football (Size 5)</span>
+                            <label><input type="checkbox"> +₹50</label>
+                        </div>
+                        <div class="acc-item">
+                            <span>🏏 English Willow Bat</span>
+                            <label><input type="checkbox"> +₹150</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-main" onclick="bookNow()">Confirm and Pay</button>
+                </div>
+
+                <div id="statusContext" style="display:none;">
+                    <div id="statusArea" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin-top:20px;"></div>
+                    
+                    <div id="ratingArea" style="margin-top: 25px; display:none; border-top: 1px solid var(--border); padding-top: 15px;">
+                        <h4>Rate Your Session</h4>
+                        <div class="stars" id="stars">
+                            <span class="star" onclick="setStar(1)">★</span>
+                            <span class="star" onclick="setStar(2)">★</span>
+                            <span class="star" onclick="setStar(3)">★</span>
+                            <span class="star" onclick="setStar(4)">★</span>
+                            <span class="star" onclick="setStar(5)">★</span>
+                        </div>
+                        <textarea placeholder="Write a review..." style="width:100%; height:60px; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:10px; color:#fff; padding:10px;"></textarea>
+                        <button class="btn btn-main" onclick="submitReview()">Submit Review</button>
+                    </div>
+
+                    <button id="cancelBtn" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);" onclick="cancelBooking()">Cancel Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content" style="max-width: 450px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('profileModal')">&times;</div>
+            <div style="padding: 40px; text-align: center;">
+                <div style="width: 70px; height: 70px; background: var(--secondary); color: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; margin: 0 auto 20px;">JD</div>
+                <h2 style="margin:0;">John Doe</h2>
+                <p style="opacity: 0.6; font-size: 14px;">john.doe@example.com</p>
+                
+                <button class="btn btn-outline" style="margin-top: 30px;" onclick="alert('Password reset link sent to email!')">Change Password</button>
+                <button class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);" onclick="location.href='index.html'">Logout Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content" style="max-width: 600px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('historyModal')">&times;</div>
+            <div style="padding: 35px;">
+                <h2 style="margin-bottom: 20px;">Booking Logs</h2>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEW HISTORY MODAL -->
+    <div class="modal" id="reviewHistoryModal">
+        <div class="modal-content" style="max-width: 500px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('reviewHistoryModal')">&times;</div>
+            <div style="padding: 35px;">
+                <h2>Your Past Reviews</h2>
+                <div class="log-item">
+                    <div>
+                        <strong>City Football Arena</strong>
+                        <div style="color: var(--accent);">⭐⭐⭐⭐⭐</div>
+                        <p style="font-size: 12px; margin: 5px 0;">"Amazing grass and lighting!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const turfs = [
+            { id: 1, name: "City Football Arena", loc: "Kochi, Kerala", rating: 4.8, price: 1200, sport: "Football", img: "https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?auto=format&fit=crop&w=800&q=80" },
+            { id: 2, name: "Green Field Turf", loc: "Trivandrum, Kerala", rating: 4.9, price: 1000, sport: "Cricket", img: "https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=800&q=80" },
+            { id: 3, name: "Premier Arena", loc: "Calicut, Kerala", rating: 4.7, price: 1500, sport: "Multi", img: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=800&q=80" },
+            { id: 4, name: "Elite Sports Hub", loc: "Kochi, Kerala", rating: 4.5, price: 1300, sport: "Football", img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80" }
+        ];
+
+        let bookings = [
+            { id: 101, turfId: 2, name: "Green Field Turf", date: "2024-03-15", time: "18:00", status: "completed", rated: true },
+            { id: 102, turfId: 1, name: "City Football Arena", date: "2024-03-25", time: "20:00", status: "upcoming", rated: false }
+        ];
+
+        let currentFilter = 'all';
+        let activeTurf = null;
+        let activeBooking = null;
+
+        function renderTurfs() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const container = document.getElementById('listings');
+            const filtered = turfs.filter(t => {
+                const matchesSearch = t.name.toLowerCase().includes(query) || t.loc.toLowerCase().includes(query);
+                const matchesFilter = currentFilter === 'all' || (currentFilter === 'top' ? t.rating >= 4.7 : t.sport === currentFilter);
+                return matchesSearch && matchesFilter;
+            });
+
+            container.innerHTML = filtered.map(t => `
+                <div class="card" onclick="openTurf(${t.id})">
+                    <div class="card-img"><img src="${t.img}"></div>
+                    <div class="card-body">
+                        <h3 style="margin:0;">${t.name}</h3>
+                        <p style="opacity:0.6; font-size:13px; margin:5px 0;">📍 ${t.loc}</p>
+                        <div style="color:var(--accent);">⭐ ${t.rating}</div>
+                        <div class="card-price">₹${t.price} <small>/ hr</small></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setFilter(f, btn) {
+            currentFilter = f;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTurfs();
+        }
+
+        function openTurf(id, bookingId = null) {
+            activeTurf = turfs.find(t => t.id === id);
+            activeBooking = bookingId ? bookings.find(b => b.id === bookingId) : null;
+
+            document.getElementById('modalImg').style.backgroundImage = `url(${activeTurf.img})`;
+            document.getElementById('modalName').innerText = activeTurf.name;
+            document.getElementById('modalLoc').innerText = activeTurf.loc;
+            document.getElementById('modalRating').innerText = `⭐ ${activeTurf.rating}`;
+
+            if (activeBooking) {
+                document.getElementById('bookingContext').style.display = 'none';
+                document.getElementById('statusContext').style.display = 'block';
+                renderStatus();
+            } else {
+                document.getElementById('bookingContext').style.display = 'block';
+                document.getElementById('statusContext').style.display = 'none';
+                renderSlots();
+            }
+            openModal('turfModal');
+        }
+
+        function renderStatus() {
+            const b = activeBooking;
+            const now = new Date();
+            const bookTime = new Date(`${b.date}T${b.time}`);
+            const diffMins = (bookTime - now) / (1000 * 60);
+
+            document.getElementById('statusArea').innerHTML = `
+                <span class="tag tag-${b.status}">${b.status}</span>
+                <div style="font-weight: 700; margin-top: 10px;">📅 ${b.date} at ${b.time}</div>
+            `;
+
+            document.getElementById('ratingArea').style.display = (b.status === 'completed' && !b.rated) ? 'block' : 'none';
+            
+            const cancelBtn = document.getElementById('cancelBtn');
+            if (b.status === 'upcoming') {
+                cancelBtn.style.display = 'block';
+                if (diffMins < 30) {
+                    cancelBtn.classList.add('btn-disabled');
+                    cancelBtn.innerText = "Cancellation Locked (<30m)";
+                } else {
+                    cancelBtn.classList.remove('btn-disabled');
+                    cancelBtn.innerText = "Cancel Booking";
+                }
+            } else {
+                cancelBtn.style.display = 'none';
+            }
+        }
+
+        function renderSlots() {
+            const times = ["04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM"];
+            document.getElementById('modalSlots').innerHTML = times.map(t => `<div class="slot" onclick="selectSlot(this)">${t}</div>`).join('');
+        }
+
+        function selectSlot(el) {
+            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function bookNow() {
+            if(!document.querySelector('.slot.selected')) return alert("Select a time slot!");
+            bookings.unshift({ id: Date.now(), turfId: activeTurf.id, name: activeTurf.name, date: "2024-03-23", time: "19:00", status: "upcoming", rated: false });
+            alert("Booking Successful!");
+            closeModal('turfModal');
+        }
+
+        function cancelBooking() {
+            if(confirm("Cancel this booking?")) {
+                activeBooking.status = 'cancelled';
+                alert("Booking Cancelled.");
+                closeModal('turfModal');
+            }
+        }
+
+        let userRating = 0;
+        function setStar(v) {
+            userRating = v;
+            const s = document.querySelectorAll('.star');
+            s.forEach((star, i) => star.classList.toggle('active', i < v));
+        }
+
+        function submitReview() {
+            if(userRating === 0) return alert("Select stars!");
+            activeBooking.rated = true;
+            alert("Thanks!");
+            closeModal('turfModal');
+        }
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+            if(id === 'historyModal') renderLogs();
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function renderLogs() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = bookings.map(b => `
+                <div class="log-item" onclick="openTurf(${b.turfId}, ${b.id})">
+                    <div>
+                        <strong style="display:block;">${b.name}</strong>
+                        <small style="opacity:0.6;">${b.date} • ${b.time}</small>
+                    </div>
+                    <span class="tag tag-${b.status}">${b.status}</span>
+                </div>
+            `).join('');
+        }
+
+        renderTurfs();
+    </script>
 </body>
 </html>

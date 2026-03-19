@@ -1,560 +1,721 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>TurfKick</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfKick - Find Your Perfect Turf</title>
 
-<style>
+    <style>
+        :root {
+            --primary-dark: #1f4037;
+            --primary-light: #99f2c8;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-body{
-margin:0;
-font-family:'Segoe UI';
-background: linear-gradient(135deg,#1f4037,#99f2c8);
-color:white;
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-/* NAVBAR */
-/* NAVBAR */
-.navbar{
-position:sticky;
-top:0;
-z-index:1000;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 50px;
-background:rgba(0,0,0,0.35);
-backdrop-filter:blur(15px);
-box-shadow:0 5px 20px rgba(0,0,0,0.3);
-}
-select{
-padding:10px 18px;
-border-radius:25px;
-border:none;
-background:rgba(255,255,255,0.2);
-color:white;
-cursor:pointer;
-appearance:none;
--webkit-appearance:none;
--moz-appearance:none;
-position:relative;
-}
+        /* NAVBAR */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--glass-border);
+        }
 
-/* Wrapper for arrow */
-.select-wrapper{
-position:relative;
-}
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* Custom arrow */
-.select-wrapper::after{
-content:"▼";
-position:absolute;
-right:12px;
-top:50%;
-transform:translateY(-50%);
-font-size:12px;
-pointer-events:none;
-color:white;
-}
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-/* LOGO */
-.logo{
-font-size:26px;
-font-weight:bold;
-letter-spacing:1px;
-}
+        .select-wrapper {
+            position: relative;
+        }
 
-/* RIGHT SIDE */
-.nav-right{
-display:flex;
-gap:15px;
-align-items:center;
-}
+        .select-wrapper::after {
+            content: "▾";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0.8;
+        }
 
-/* SELECT */
-select{
-padding:10px 15px;
-border-radius:25px;
-border:none;
-background:rgba(255,255,255,0.2);
-color:white;
-cursor:pointer;
-}
-select:hover{
-background:rgba(255,255,255,0.3);
-}
+        select {
+            padding: 10px 35px 10px 18px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            cursor: pointer;
+            appearance: none;
+            font-size: 14px;
+            transition: var(--transition);
+        }
 
-/* LOGIN BUTTON */
-.nav-right button{
-padding:10px 22px;
-border-radius:25px;
-border:none;
-background:white;
-color:#1f4037;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-}
+        select:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
 
-/* HOVER EFFECT */
-.nav-right button:hover{
-transform:scale(1.05);
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
+        .nav-right button {
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: none;
+            background: white;
+            color: var(--primary-dark);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-/* HERO */
-.hero{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-margin-top:30px;
-}
-.hero input{
-width:420px;
-padding:14px 20px;
-border-radius:30px;
-border:none;
-outline:none;
-margin-top:15px;
-font-size:15px;
-display:block; /* important */
-}
+        .nav-right button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            background: #f8f8f8;
+        }
 
-/* FOCUS EFFECT */
-.hero input:focus{
-transform:scale(1.03);
-box-shadow:0 8px 25px rgba(0,0,0,0.4);
-}
+        /* HERO */
+        .hero {
+            padding: 60px 20px 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-/* GRID */
-.container{
-width:85%;
-margin:40px auto;
-display:grid;
-grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-gap:25px;
-}
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
 
-/* CARD */
-.card{
-background:rgba(255,255,255,0.15);
-backdrop-filter: blur(10px);
-border-radius:18px;
-overflow:hidden;
-cursor:pointer;
-transition:0.3s;
-position:relative;
-}
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-.card:hover{
-transform:translateY(-10px);
-box-shadow:0 15px 30px rgba(0,0,0,0.4);
-}
+        .hero input {
+            width: 100%;
+            padding: 16px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            outline: none;
+            font-size: 16px;
+            color: white;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
 
-/* IMAGE */
-.card img{
-width:100%;
-height:160px;
-object-fit:cover;
-}
+        .hero input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
 
-/* CONTENT */
-.content{
-padding:15px;
-}
+        .hero input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 105%;
+            margin-left: -2.5%;
+        }
 
-/* TOP BADGES */
-.badge{
-position:absolute;
-top:10px;
-left:10px;
-background:#00000080;
-padding:5px 10px;
-border-radius:12px;
-font-size:12px;
-}
+        /* GRID */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
 
-.lock{
-position:absolute;
-top:10px;
-right:10px;
-background:#00000080;
-padding:5px 10px;
-border-radius:12px;
-}
+        /* CARD */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid var(--glass-border);
+        }
 
-/* FAVORITE */
-.fav{
-position:absolute;
-bottom:140px;
-right:10px;
-font-size:18px;
-cursor:pointer;
-}
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
 
-/* RATING */
-.rating{
-color:#ffd700;
-font-size:14px;
-}
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
 
-/* PRICE */
-.price{
-font-weight:bold;
-margin-top:5px;
-}
+        .card:hover img {
+            transform: scale(1.05);
+        }
 
-/* MODAL */
-/* MODAL BACKGROUND */
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-justify-content:center;
-align-items:center;
-z-index:1000;
-}
+        .content {
+            padding: 20px;
+        }
 
-/* MODAL BOX */
-.modal-content{
-width:340px;
-padding:30px;
-border-radius:20px;
-background: linear-gradient(135deg,#ffffff20,#ffffff05);
-backdrop-filter: blur(20px);
-color:white;
-box-shadow:0 10px 40px rgba(0,0,0,0.5);
-}
+        .content h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.25rem;
+        }
 
-/* TABS */
-.tabs{
-display:flex;
-justify-content:space-between;
-margin-bottom:20px;
-}
+        /* BADGES */
+        .badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
 
-.tab{
-flex:1;
-padding:10px;
-cursor:pointer;
-border-radius:10px;
-text-align:center;
-background:#ffffff20;
-}
+        .lock {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 2;
+        }
 
-.tab.active{
-background:white;
-color:#1f4037;
-font-weight:bold;
-}
+        .fav {
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+            transition: var(--transition);
+            z-index: 2;
+        }
 
-/* FORM */
-.form{
-display:none;
-}
+        .fav:hover {
+            transform: scale(1.2);
+        }
 
-.form.active{
-display:block;
-}
+        .rating {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
 
-input{
-width:100%;
-padding:10px;
-margin:10px 0;
-border-radius:10px;
-border:none;
-outline:none;
-}
+        .price {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--primary-light);
+            margin-top: 10px;
+        }
 
-/* BUTTON */
-.modal-content button{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:20px;
-border:none;
-background:white;
-color:#1f4037;
-font-weight:bold;
-cursor:pointer;
-}
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-/* LINK */
-.switch{
-margin-top:10px;
-font-size:13px;
-text-align:center;
-cursor:pointer;
-opacity:0.8;
-}
-/* FOOTER */
-.footer{
-background:rgba(0,0,0,0.4);
-padding:30px 50px;
-margin-top:50px;
-}
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
 
-.footer-content{
-display:flex;
-justify-content:space-between;
-flex-wrap:wrap;
-gap:30px;
-}
+        .modal-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
 
-.footer h3, .footer h4{
-margin-bottom:10px;
-}
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
 
-.footer p{
-opacity:0.8;
-margin:5px 0;
-}
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+        }
 
-.footer p:hover{
-opacity:1;
-cursor:pointer;
-}
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
 
-.copyright{
-text-align:center;
-margin-top:20px;
-font-size:14px;
-opacity:0.7;
-}
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
 
-</style>
+        .tab {
+            flex: 1;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
 
+        .tab.active {
+            background: white;
+            color: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            outline: none;
+            font-size: 15px;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        .form input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary-light);
+        }
+
+        .modal-content .login-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            border-radius: 15px;
+            border: none;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-content .login-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .switch {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .switch span {
+            color: var(--primary-light);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .switch span:hover {
+            opacity: 1;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 60px 5% 30px;
+            margin-top: 80px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer h3 { font-size: 24px; margin-bottom: 20px; }
+        .footer h4 { font-size: 18px; margin-bottom: 15px; color: var(--primary-light); }
+        .footer p { opacity: 0.7; margin: 8px 0; transition: 0.2s; }
+        .footer p:hover { opacity: 1; cursor: pointer; color: var(--primary-light); }
+
+        .copyright {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 14px;
+            opacity: 0.5;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+
+    </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">TurfKick</div>
+        <div class="nav-right">
+            <div class="select-wrapper">
+                <select id="locationFilter" onchange="filterCards()">
+                    <option value="all">All Locations</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Trivandrum">Trivandrum</option>
+                    <option value="Calicut">Calicut</option>
+                </select>
+            </div>
 
-<div class="logo">TurfKick</div>
+            <div class="select-wrapper">
+                <select id="sportFilter" onchange="filterCards()">
+                    <option value="all">All Sports</option>
+                    <option value="Football">Football</option>
+                    <option value="Cricket">Cricket</option>
+                    <option value="Multi">Multi</option>
+                </select>
+            </div>
 
-<div class="nav-right">
+            <button onclick="openLogin()">Login</button>
+        </div>
+    </nav>
 
-<div class="select-wrapper">
-<select id="locationFilter" onchange="filterCards()">
-<option value="all">All Locations</option>
-<option value="Kochi">Kochi</option>
-<option value="Trivandrum">Trivandrum</option>
-<option value="Calicut">Calicut</option>
-</select>
-</div>
+    <!-- HERO -->
+    <header class="hero">
+        <h1>Find Your Perfect Turf</h1>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search by name, location or sport..." onkeyup="filterCards()">
+        </div>
+    </header>
 
-<div class="select-wrapper">
-<select id="sportFilter" onchange="filterCards()">
-<option value="all">All Sports</option>
-<option value="Football">Football</option>
-<option value="Cricket">Cricket</option>
-<option value="Multi">Multi</option>
-</select>
-</div>
+    <!-- GRID -->
+    <main class="container" id="turfContainer">
+        <!-- CARD 1 -->
+        <div class="card" data-location="Kochi" data-sport="Football" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?auto=format&fit=crop&w=600&q=80" alt="Football Turf">
+            <div class="badge">Football</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>City Football Arena</h3>
+                <div class="rating">⭐⭐⭐⭐☆ (4.2)</div>
+                <p>📍 Kochi</p>
+                <div class="price">₹1200 / hr</div>
+            </div>
+        </div>
 
-<button onclick="openLogin()">Login</button>
+        <!-- CARD 2 -->
+        <div class="card" data-location="Trivandrum" data-sport="Cricket" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=600&q=80" alt="Cricket Ground">
+            <div class="badge">Cricket</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>Green Field Turf</h3>
+                <div class="rating">⭐⭐⭐⭐⭐ (4.8)</div>
+                <p>📍 Trivandrum</p>
+                <div class="price">₹1000 / hr</div>
+            </div>
+        </div>
 
-</div>
+        <!-- CARD 3 -->
+        <div class="card" data-location="Calicut" data-sport="Multi" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=600&q=80" alt="Multi Sport Arena">
+            <div class="badge">Multi</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>Premier Arena</h3>
+                <div class="rating">⭐⭐⭐⭐☆ (4.5)</div>
+                <p>📍 Calicut</p>
+                <div class="price">₹1500 / hr</div>
+            </div>
+        </div>
 
-</div>
+        <!-- CARD 4 -->
+        <div class="card" data-location="Kochi" data-sport="Football" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80" alt="Elite Sports">
+            <div class="badge">Football</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>Elite Sports Hub</h3>
+                <div class="rating">⭐⭐⭐⭐☆</div>
+                <p>📍 Kochi</p>
+                <div class="price">₹1300 / hr</div>
+            </div>
+        </div>
 
-<!-- HERO -->
-<div class="hero">
-<h1>Find Your Perfect Turf</h1>
-<input type="text" id="search" placeholder="Search turfs..." onkeyup="filterCards()">
-</div>
+        <!-- CARD 5 -->
+        <div class="card" data-location="Trivandrum" data-sport="Cricket" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" alt="Victory Ground">
+            <div class="badge">Cricket</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>Victory Ground</h3>
+                <div class="rating">⭐⭐⭐⭐⭐</div>
+                <p>📍 Trivandrum</p>
+                <div class="price">₹1100 / hr</div>
+            </div>
+        </div>
 
-<!-- GRID -->
-<div class="container" id="turfContainer">
+        <!-- CARD 6 -->
+        <div class="card" data-location="Calicut" data-sport="Multi" onclick="requireLogin()">
+            <img src="https://images.unsplash.com/photo-1505842465776-3bfd18890ff4?auto=format&fit=crop&w=600&q=80" alt="Urban Play">
+            <div class="badge">Multi</div>
+            <div class="lock">🔒</div>
+            <div class="fav">❤️</div>
+            <div class="content">
+                <h3>Urban Play Arena</h3>
+                <div class="rating">⭐⭐⭐⭐☆</div>
+                <p>📍 Calicut</p>
+                <div class="price">₹1400 / hr</div>
+            </div>
+        </div>
+    </main>
 
-<!-- CARD -->
-<div class="card" data-location="Kochi" data-sport="Football" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f0b">
-<div class="badge">Football</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>City Football Arena</h3>
-<div class="rating">⭐⭐⭐⭐☆ (4.2)</div>
-<p>Kochi</p>
-<div class="price">₹1200/hr</div>
-</div>
-</div>
+    <!-- LOGIN MODAL -->
+    <div class="modal" id="loginModal" onclick="handleBackdropClick(event)">
+        <div class="modal-content">
+            <div class="close-btn" onclick="closeLogin()">&times;</div>
 
-<div class="card" data-location="Trivandrum" data-sport="Cricket" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1593341646782-e0b495cff86d">
-<div class="badge">Cricket</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>Green Field Turf</h3>
-<div class="rating">⭐⭐⭐⭐⭐ (4.8)</div>
-<p>Trivandrum</p>
-<div class="price">₹1000/hr</div>
-</div>
-</div>
+            <div class="tabs">
+                <div class="tab active" id="userTab" onclick="switchTab('user')">User</div>
+                <div class="tab" id="ownerTab" onclick="switchTab('owner')">Owner</div>
+            </div>
 
-<div class="card" data-location="Calicut" data-sport="Multi" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d">
-<div class="badge">Multi</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>Premier Arena</h3>
-<div class="rating">⭐⭐⭐⭐☆ (4.5)</div>
-<p>Calicut</p>
-<div class="price">₹1500/hr</div>
-</div>
-</div>
+            <!-- USER LOGIN -->
+            <div id="userLogin" class="form">
+                <h2 style="margin-bottom: 25px; text-align: center;">User Login</h2>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••">
+                </div>
+                <button class="login-btn">Login as User</button>
+                <div class="switch">
+                    Don't have an account? <span onclick="goToUserRegister()">Register Now</span>
+                </div>
+            </div>
 
-<!-- duplicate 3 more -->
-<div class="card" data-location="Kochi" data-sport="Football" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1517649763962-0c623066013b">
-<div class="badge">Football</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>Elite Sports Hub</h3>
-<div class="rating">⭐⭐⭐⭐☆</div>
-<p>Kochi</p>
-<div class="price">₹1300/hr</div>
-</div>
-</div>
+            <!-- OWNER LOGIN -->
+            <div id="ownerLogin" class="form hidden">
+                <h2 style="margin-bottom: 25px; text-align: center;">Owner Login</h2>
+                <div class="form-group">
+                    <label>Business Email</label>
+                    <input type="email" placeholder="owner@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••">
+                </div>
+                <button class="login-btn">Login as Owner</button>
+                <div class="switch">
+                    Want to list your turf? <span onclick="goToOwnerRegister()">Register as Owner</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card" data-location="Trivandrum" data-sport="Cricket" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1546519638-68e109498ffc">
-<div class="badge">Cricket</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>Victory Ground</h3>
-<div class="rating">⭐⭐⭐⭐⭐</div>
-<p>Trivandrum</p>
-<div class="price">₹1100/hr</div>
-</div>
-</div>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div style="flex: 2; min-width: 250px;">
+                <div class="logo" style="margin-bottom: 20px;">TurfKick</div>
+                <p>The ultimate platform for sports enthusiasts to find and book their favorite turfs across Kerala. Play anytime, anywhere.</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <p>Browse Turfs</p>
+                <p>About Us</p>
+                <p>Contact Support</p>
+                <p>Terms & Conditions</p>
+            </div>
+            <div>
+                <h4>Follow Us</h4>
+                <p>Instagram</p>
+                <p>Facebook</p>
+                <p>Twitter</p>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2024 TurfKick. All rights reserved. Made with ❤️ for Sports.
+        </div>
+    </footer>
 
-<div class="card" data-location="Calicut" data-sport="Multi" onclick="requireLogin()">
-<img src="https://images.unsplash.com/photo-1505842465776-3bfd18890ff4">
-<div class="badge">Multi</div>
-<div class="lock">🔒</div>
-<div class="fav">❤️</div>
-<div class="content">
-<h3>Urban Play Arena</h3>
-<div class="rating">⭐⭐⭐⭐☆</div>
-<p>Calicut</p>
-<div class="price">₹1400/hr</div>
-</div>
-</div>
+    <script>
+        function requireLogin() {
+            openLogin();
+        }
 
-</div>
+        function openLogin() {
+            const modal = document.getElementById("loginModal");
+            modal.style.display = "flex";
+            setTimeout(() => modal.classList.add("active"), 10);
+        }
 
-<!-- LOGIN MODAL -->
-<!-- LOGIN MODAL -->
-<div class="modal" id="loginModal">
-<div class="modal-content">
+        function closeLogin() {
+            const modal = document.getElementById("loginModal");
+            modal.classList.remove("active");
+            setTimeout(() => modal.style.display = "none", 300);
+        }
 
-<div class="tabs">
-<div class="tab active" onclick="switchTab('user')">User</div>
-<div class="tab" onclick="switchTab('owner')">Owner</div>
-</div>
+        function handleBackdropClick(e) {
+            if (e.target.id === "loginModal") {
+                closeLogin();
+            }
+        }
 
-<!-- USER LOGIN -->
-<div id="userLogin" class="form active">
-<h3>User Login</h3>
-<input type="text" placeholder="Email">
-<input type="password" placeholder="Password">
-<button>Login</button>
+        function goToUserRegister() {
+            window.location.href = "user_register.html";
+        }
 
-<div class="switch" onclick="goToUserRegister()">
-New user? Register
-</div>
-</div>
+        function goToOwnerRegister() {
+            window.location.href = "owner_register.html";
+        }
 
-<!-- OWNER LOGIN -->
-<div id="ownerLogin" class="form">
-<h3>Owner Login</h3>
-<input type="text" placeholder="Email">
-<input type="password" placeholder="Password">
-<button>Login</button>
+        function switchTab(type) {
+            const userTab = document.getElementById("userTab");
+            const ownerTab = document.getElementById("ownerTab");
+            const userForm = document.getElementById("userLogin");
+            const ownerForm = document.getElementById("ownerLogin");
 
-<div class="switch" onclick="goToOwnerRegister()">
-Register as Owner
-</div>
-</div>
+            if (type === "user") {
+                userTab.classList.add("active");
+                ownerTab.classList.remove("active");
+                userForm.classList.remove("hidden");
+                ownerForm.classList.add("hidden");
+            } else {
+                ownerTab.classList.add("active");
+                userTab.classList.remove("active");
+                ownerForm.classList.remove("hidden");
+                userForm.classList.add("hidden");
+            }
+        }
 
-<button onclick="closeLogin()">Close</button>
+        /* FILTER FUNCTION */
+        function filterCards() {
+            let location = document.getElementById("locationFilter").value;
+            let sport = document.getElementById("sportFilter").value;
+            let search = document.getElementById("search").value.toLowerCase();
 
-</div>
-</div>
+            let cards = document.querySelectorAll(".card");
 
-<script>
+            cards.forEach(card => {
+                let cardLocation = card.getAttribute("data-location");
+                let cardSport = card.getAttribute("data-sport");
+                let title = card.querySelector("h3").innerText.toLowerCase();
 
-function requireLogin(){
-openLogin();
-}
+                let match = 
+                    (location === "all" || cardLocation === location) &&
+                    (sport === "all" || cardSport.includes(sport)) &&
+                    (title.includes(search) || cardLocation.toLowerCase().includes(search) || cardSport.toLowerCase().includes(search));
 
-function openLogin(){
-document.getElementById("loginModal").style.display="flex";
-}
-function goToUserRegister(){
-window.location.href = "user_register.html";
-}
-
-function goToOwnerRegister(){
-window.location.href = "owner_register.html";
-}
-function closeLogin(){
-document.getElementById("loginModal").style.display="none";
-}
-function switchTab(type){
-let tabs = document.querySelectorAll(".tab");
-tabs.forEach(t=>t.classList.remove("active"));
-
-event.target.classList.add("active");
-
-document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));
-
-if(type==="user"){
-document.getElementById("userLogin").classList.add("active");
-}else{
-document.getElementById("ownerLogin").classList.add("active");
-}
-}
-
-function toggleForm(id){
-document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-/* FILTER FUNCTION */
-function filterCards(){
-let location = document.getElementById("locationFilter").value;
-let sport = document.getElementById("sportFilter").value;
-let search = document.getElementById("search").value.toLowerCase();
-
-let cards = document.querySelectorAll(".card");
-
-cards.forEach(card=>{
-let cardLocation = card.getAttribute("data-location");
-let cardSport = card.getAttribute("data-sport");
-let title = card.querySelector("h3").innerText.toLowerCase();
-
-let match = 
-(location === "all" || cardLocation === location) &&
-(sport === "all" || cardSport.includes(sport)) &&
-title.includes(search);
-
-card.style.display = match ? "block" : "none";
-});
-}
-
-</script>
-
+                card.style.display = match ? "block" : "none";
+            });
+        }
+    </script>
 </body>
 </html>
