@@ -150,13 +150,14 @@ border-radius: 10px;
 
 <h2>User Registration</h2>
 
-<form onsubmit="return validateForm()">
+<form id="userRegForm">
+<input type="hidden" name="role" value="user">
 
-<input type="text" placeholder="Name" required>
+<input type="text" name="name" placeholder="Name" required>
 
-<input type="text" placeholder="Phone or Email" required>
+<input type="email" name="email" placeholder="Email" required>
 
-<input type="password" id="pass" placeholder="Create Password" required>
+<input type="password" name="password" id="pass" placeholder="Create Password" required>
 
 <input type="password" id="repass" placeholder="Retype Password" required>
 
@@ -170,6 +171,7 @@ border-radius: 10px;
 
 </div>
 
+<script src="js/auth.js"></script>
 <script>
 
 function goBack(){
@@ -193,6 +195,13 @@ return false;
 
 return true;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    TurfKickAuth.submitForm('userRegForm', 'api/register.php', (result) => {
+        alert(result.message);
+        window.location.href = 'index.html';
+    }, validateForm);
+});
 
 </script>
 

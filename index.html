@@ -584,38 +584,40 @@
             </div>
 
             <!-- USER LOGIN -->
-            <div id="userLogin" class="form">
+            <form id="userLogin" class="form" action="auth/login.php" method="POST">
+                <input type="hidden" name="role" value="user">
                 <h2 style="margin-bottom: 25px; text-align: center;">User Login</h2>
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="Enter your email">
+                    <input type="email" name="email" placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" placeholder="••••••••">
+                    <input type="password" name="password" placeholder="••••••••" required>
                 </div>
-                <button class="login-btn">Login as User</button>
+                <button type="submit" class="login-btn">Login as User</button>
                 <div class="switch">
                     Don't have an account? <span onclick="goToUserRegister()">Register Now</span>
                 </div>
-            </div>
+            </form>
 
             <!-- OWNER LOGIN -->
-            <div id="ownerLogin" class="form hidden">
+            <form id="ownerLogin" class="form hidden" action="auth/login.php" method="POST">
+                <input type="hidden" name="role" value="owner">
                 <h2 style="margin-bottom: 25px; text-align: center;">Owner Login</h2>
                 <div class="form-group">
                     <label>Business Email</label>
-                    <input type="email" placeholder="owner@example.com">
+                    <input type="email" name="email" placeholder="owner@example.com" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" placeholder="••••••••">
+                    <input type="password" name="password" placeholder="••••••••" required>
                 </div>
-                <button class="login-btn">Login as Owner</button>
+                <button type="submit" class="login-btn">Login as Owner</button>
                 <div class="switch">
                     Want to list your turf? <span onclick="goToOwnerRegister()">Register as Owner</span>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -645,7 +647,13 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            TurfKickAuth.submitForm('userLogin', 'api/login.php');
+            TurfKickAuth.submitForm('ownerLogin', 'api/login.php');
+        });
+
         function requireLogin() {
             openLogin();
         }
@@ -669,11 +677,11 @@
         }
 
         function goToUserRegister() {
-            window.location.href = "user_register.html";
+            window.location.href = "userreg.html";
         }
 
         function goToOwnerRegister() {
-            window.location.href = "owner_register.html";
+            window.location.href = "Owner_register.html";
         }
 
         function switchTab(type) {

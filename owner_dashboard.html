@@ -93,7 +93,7 @@
         <div class="logo">TurfKick Owner</div>
         <div class="nav-right">
             <span class="owner-badge">Premium Partner</span>
-            <div style="cursor: pointer; opacity: 0.7;" onclick="window.location.href='index.html'">Logout</div>
+            <div style="cursor: pointer; opacity: 0.7;" onclick="window.location.href='api/logout.php'">Logout</div>
         </div>
     </nav>
 
@@ -156,7 +156,7 @@
                             <label>Turf Description & Amenities</label>
                             <textarea id="turfDesc" rows="4">Premium 5-a-side football turf with high-quality artificial grass and LED floodlights.</textarea>
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="saveTurf()">Save Turf Details</button>
+                        <button type="button" class="btn btn-primary" onclick="TurfKickOwner.saveTurf()">Save Turf Details</button>
                     </form>
                 </div>
             </section>
@@ -306,6 +306,7 @@
         </div>
     </div>
 
+    <script src="js/owner.js"></script>
     <script>
         function showSection(id, link) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -313,19 +314,6 @@
             
             document.getElementById(id).classList.add('active');
             link.classList.add('active');
-        }
-
-        function saveTurf() {
-            const name = document.getElementById('turfName').value;
-            const price = document.getElementById('turfPrice').value;
-            const loc = document.getElementById('turfLoc').value;
-
-            document.getElementById('displayName').innerText = name;
-            document.getElementById('displayPrice').innerText = '₹' + price + ' / hour';
-            document.getElementById('displayLoc').innerText = loc;
-            
-            document.getElementById('turfDisplay').style.display = 'block';
-            alert("Turf details updated successfully!");
         }
 
         function cancelBooking(span) {

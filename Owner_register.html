@@ -132,22 +132,25 @@ scrollbar-color: #99f2c8 transparent;
 
 <h2>Owner Registration</h2>
 
-<form>
+<form id="ownerRegForm">
+<input type="hidden" name="role" value="owner">
 
-<input type="text" placeholder="Owner Name" required>
+<input type="text" name="name" placeholder="Owner Name" required>
 
-<input type="text" placeholder="Turf Name" required>
+<input type="text" name="turf_name" placeholder="Turf Name" required>
 
-<input type="text" placeholder="Phone or Email" required>
+<input type="email" name="email" placeholder="Email" required>
+
+<input type="password" name="password" placeholder="Create Password" required>
 
 <label>Aadhaar Upload</label>
-<input type="file" class="file" required>
+<input type="file" name="aadhaar" class="file" required>
 
 <label>Turf Operation License</label>
-<input type="file" class="file" required>
+<input type="file" name="license" class="file" required>
 
 <label>Turf Images</label>
-<input type="file" class="file" multiple required>
+<input type="file" name="images[]" class="file" multiple required>
 
 <button type="submit">Register</button>
 
@@ -159,10 +162,18 @@ scrollbar-color: #99f2c8 transparent;
 
 </div>
 
+<script src="js/auth.js"></script>
 <script>
 function goBack(){
 window.location.href = "index.html";
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    TurfKickAuth.submitForm('ownerRegForm', 'api/register.php', (result) => {
+        alert(result.message);
+        window.location.href = 'index.html';
+    });
+});
 </script>
 
 </body>
