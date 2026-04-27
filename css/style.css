@@ -1,0 +1,110 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f5f5f5;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+              url("hero-turf.jpg") center/cover no-repeat;
+  color: white;
+  padding: 20px 60px;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00e676;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.nav-links .btn {
+  padding: 8px 16px;
+  background: #00e676;
+  color: black;
+  border-radius: 4px;
+}
+
+/* HERO CONTENT */
+.hero-content {
+  max-width: 700px;
+  margin-top: 120px;
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.hero-content p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* SEARCH BOX */
+.search-box {
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.search-box input,
+.search-box select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  flex: 1;
+}
+
+.search-box button {
+  background: #00e676;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero {
+    padding: 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 36px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}

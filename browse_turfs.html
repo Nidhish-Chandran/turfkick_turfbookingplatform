@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TurfKick</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1f4037 0%, #3a7a5c 50%, #99f2c8 100%);
+            --accent: #99f2c8;
+            --accent-dark: #1f4037;
+            --accent-mid: #3a7a5c;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-bg-strong: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-white: #ffffff;
+            --text-muted: rgba(255,255,255,0.7);
+            --text-dark: #1f4037;
+            --card-radius: 20px;
+            --btn-radius: 50px;
+            --input-radius: 12px;
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --shadow-btn: 0 8px 25px rgba(0, 0, 0, 0.3);
+            --font: 'Segoe UI', 'Inter', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #1f4037, #99f2c8); border-radius: 10px; }
+        * { scrollbar-width: thin; scrollbar-color: #99f2c8 transparent; }
+
+        /* NAVBAR */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-white);
+            cursor: pointer;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            border-radius: var(--btn-radius);
+            cursor: pointer;
+            background: var(--glass-bg);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+
+        .user-profile {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: white;
+            color: var(--accent-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: var(--shadow-btn);
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* SEARCH & HERO */
+        .hero {
+            padding: 50px 5% 30px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0;
+            color: var(--text-white);
+        }
+
+        .search-container {
+            max-width: 650px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 16px 30px;
+            border-radius: var(--btn-radius);
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: var(--text-white);
+            font-size: 16px;
+            outline: none;
+            transition: var(--transition);
+            box-sizing: border-box;
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-container input::placeholder {
+            color: var(--text-white);
+            opacity: 0.8;
+        }
+
+        .search-container input:focus {
+            background: var(--glass-bg-strong);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border-radius: var(--btn-radius);
+            border: none;
+            background: var(--glass-bg);
+            color: var(--text-white);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--glass-border);
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: white;
+            color: var(--accent-dark);
+            font-weight: bold;
+            box-shadow: var(--shadow-btn);
+            border-color: white;
+        }
+
+        select#sortSelect {
+            background: var(--glass-bg);
+            color: var(--text-white);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--btn-radius);
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select#sortSelect:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        select#sortSelect option {
+            background: var(--accent-dark);
+            color: white;
+        }
+
+        /* LISTINGS GRID */
+        .container {
+            width: 90%;
+            max-width: 1300px;
+            margin: 0 auto 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow-card);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-img {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-body h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: var(--text-white);
+        }
+
+        .card-body p {
+            margin: 5px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .card-price {
+            margin-top: 15px;
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        /* MODALS (GLASSMORPHISM) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            width: 95%;
+            max-width: 950px;
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: 0.4s;
+            position: relative;
+            box-shadow: var(--shadow-card);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-left {
+            width: 45%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .modal-right {
+            width: 55%;
+            padding: 35px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 20px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        /* UI ELEMENTS */
+        .slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .slot {
+            padding: 10px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--input-radius);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .slot:hover:not(.booked) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .slot.selected {
+            background: white;
+            color: var(--accent-dark);
+            font-weight: bold;
+            border-color: white;
+        }
+
+        .slot.booked {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .acc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--input-radius);
+            margin-bottom: 8px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .tag {
+            padding: 6px 12px;
+            border-radius: var(--btn-radius);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tag-upcoming { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+        .tag-completed { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .tag-cancelled { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--btn-radius);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 15px;
+            font-size: 15px;
+        }
+
+        .btn-main {
+            background: white;
+            color: var(--accent-dark);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            font-size: 24px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.2);
+        }
+
+        .star.active {
+            color: var(--accent);
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--card-radius);
+            margin-bottom: 12px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .log-item:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        @media (max-width: 850px) {
+            .modal-content { flex-direction: column; height: 90vh; }
+            .modal-left { width: 100%; height: 200px; }
+            .modal-right { width: 100%; padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo" onclick="location.reload()">TurfKick</div>
+        <div class="nav-right">
+            <div class="nav-item" onclick="openModal('historyModal')"><span>📅</span> My Bookings</div>
+            <div class="nav-item" onclick="openModal('reviewHistoryModal')"><span>⭐</span> Reviews</div>
+            <div class="user-profile" onclick="openModal('profileModal')">JD</div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Welcome Back, John!</h1>
+        <p style="opacity: 0.8; margin-bottom: 25px; color: var(--text-white);">Find and book verified turfs instantly.</p>
+        
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search by name, city, or sport..." onkeyup="renderTurfs()">
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="TurfKickBookings.setFilter('all', this)">All Sports</button>
+            <button class="filter-btn" onclick="TurfKickBookings.setFilter('Football', this)">Football</button>
+            <button class="filter-btn" onclick="TurfKickBookings.setFilter('Cricket', this)">Cricket</button>
+            
+            <select id="sortSelect" onchange="TurfKickBookings.renderTurfs()">
+                <option value="none">Sort By</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container" id="listings">
+        <!-- Turfs injected here -->
+    </main>
+
+    <!-- HORIZONTAL TURF MODAL -->
+    <div class="modal" id="turfModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('turfModal')">&times;</div>
+            <div class="modal-left" id="modalImg"></div>
+            <div class="modal-right">
+                <h2 id="modalName" style="margin:0; color: var(--text-white);"></h2>
+                <p id="modalLoc" style="opacity: 0.8; margin: 5px 0; font-size: 14px; color: var(--text-white);"></p>
+                <div id="modalRating" style="color: var(--accent); font-weight: bold; font-size: 14px;"></div>
+
+                <div id="bookingContext">
+                    <div id="modalGallery" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-top:15px;"></div>
+                    <h4 style="margin-bottom: 8px; margin-top: 20px; color: var(--text-white);">Booking Date</h4>
+                    <input type="date" id="bookingDate" onchange="TurfKickBookings.onDateChange()" style="width:100%; padding:14px; border-radius:var(--input-radius); border:1px solid var(--glass-border); background:rgba(255,255,255,0.1); color:#fff; box-sizing:border-box; outline:none;">
+                    
+                    <h4 style="margin-bottom: 8px; margin-top: 20px; color: var(--text-white);">Available Slots</h4>
+                    <div class="slots" id="modalSlots"></div>
+
+                    <h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-white);">Rent Equipment</h4>
+                    <div id="accStore">
+                        <p style="opacity:0.6; font-size:12px;">Loading equipment...</p>
+                    </div>
+
+                    <div id="bookingTotal" style="font-weight:800; margin-top:20px; font-size: 1.2rem; color: var(--text-white);">Total: Rs 0.00</div>
+                    <button class="btn btn-main" onclick="bookNow()">Confirm and Pay</button>
+                </div>
+
+                <div id="statusContext" style="display:none;">
+                    <div id="statusArea" style="background:rgba(255,255,255,0.1); padding:15px; border-radius:var(--input-radius); margin-top:20px;"></div>
+                    
+                    <div id="ratingArea" style="margin-top: 25px; display:none; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                        <h4 style="margin:0;">Rate Your Session</h4>
+                        <div class="stars" id="stars">
+                            <span class="star" onclick="setStar(1)">★</span>
+                            <span class="star" onclick="setStar(2)">★</span>
+                            <span class="star" onclick="setStar(3)">★</span>
+                            <span class="star" onclick="setStar(4)">★</span>
+                            <span class="star" onclick="setStar(5)">★</span>
+                        </div>
+                        <textarea placeholder="Write a review..." style="width:100%; height:80px; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); border-radius:var(--input-radius); color:#fff; padding:12px; outline:none; box-sizing: border-box; resize: none;"></textarea>
+                        <button class="btn btn-main" onclick="submitReview()">Submit Review</button>
+                    </div>
+
+                    <button id="cancelBtn" class="btn btn-outline" style="color:#e74c3c; border-color:#e74c3c; margin-top:20px;" onclick="cancelBooking()">Cancel Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content" style="max-width: 450px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('profileModal')">&times;</div>
+            <div style="padding: 40px; text-align: center;">
+                <div id="profileInitials" style="width: 80px; height: 80px; background: white; color: var(--accent-dark); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; margin: 0 auto 20px; box-shadow: var(--shadow-btn);">JD</div>
+                <h2 id="profileName" style="margin:0; color: var(--text-white);">John Doe</h2>
+                <p id="profileEmail" style="opacity: 0.8; font-size: 14px; color: var(--text-white);">john.doe@example.com</p>
+                
+                <button class="btn btn-outline" style="margin-top: 30px;" onclick="alert('Password reset link sent to email!')">Change Password</button>
+                <button class="btn btn-outline" style="color:#e74c3c; border-color:#e74c3c; margin-top: 15px;" onclick="location.href='api/logout.php'">Logout Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content" style="max-width: 600px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('historyModal')">&times;</div>
+            <div style="padding: 35px;">
+                <h2 style="margin-bottom: 25px; color: var(--text-white);">My Bookings</h2>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEW HISTORY MODAL -->
+    <div class="modal" id="reviewHistoryModal">
+        <div class="modal-content" style="max-width: 500px; flex-direction: column;">
+            <div class="modal-close" onclick="closeModal('reviewHistoryModal')">&times;</div>
+            <div style="padding: 35px;">
+                <h2 style="margin-bottom: 25px; color: var(--text-white);">Your Past Reviews</h2>
+                <div class="log-item">
+                    <div>
+                        <strong style="color: var(--text-white);">City Football Arena</strong>
+                        <div style="color: var(--accent); margin-top: 5px;">⭐⭐⭐⭐⭐</div>
+                        <p style="font-size: 13px; margin: 8px 0 0 0; opacity: 0.8;">"Amazing grass and lighting!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bookings.js"></script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TurfKick</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1f4037 0%, #3a7a5c 50%, #99f2c8 100%);
+            --accent: #99f2c8;
+            --accent-dark: #1f4037;
+            --accent-mid: #3a7a5c;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-bg-strong: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-white: #ffffff;
+            --text-muted: rgba(255,255,255,0.7);
+            --text-dark: #1f4037;
+            --card-radius: 20px;
+            --btn-radius: 50px;
+            --input-radius: 12px;
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --shadow-btn: 0 8px 25px rgba(0, 0, 0, 0.3);
+            --font: 'Segoe UI', 'Inter', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font);
+            background: var(--bg-gradient);
+            color: var(--text-white);
+            min-height: 100vh;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #1f4037, #99f2c8); border-radius: 10px; }
+        * { scrollbar-width: thin; scrollbar-color: #99f2c8 transparent; }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: var(--accent-dark);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 0 1rem;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-white);
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-subtitle {
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links-container {
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--glass-bg);
+            border-left-color: var(--accent);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .logout-container {
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border-radius: var(--btn-radius);
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.5rem;
+            background: transparent;
+        }
+
+        .card {
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-card);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card h3 {
+            color: var(--text-white);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* TABLES */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: var(--glass-bg);
+            color: var(--text-white);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            color: var(--text-white);
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: var(--glass-bg);
+        }
+
+        /* STATUS PILLS */
+        .status-pill {
+            padding: 6px 14px;
+            border-radius: var(--btn-radius);
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: capitalize;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .pill-active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+        .pill-inactive { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .pill-pending { background: rgba(243, 156, 18, 0.2); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.3); }
+        .pill-upcoming { background: rgba(52, 152, 219, 0.2); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
+        .pill-cancelled { background: rgba(149, 165, 166, 0.2); color: #bdc3c7; border: 1px solid rgba(149, 165, 166, 0.3); }
+
+        /* ACTION BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--btn-radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .btn-approve { background: #2ecc71; color: white; }
+        .btn-approve:hover { background: #27ae60; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); transform: translateY(-2px); }
+
+        .btn-disable { background: #e74c3c; color: white; }
+        .btn-disable:hover { background: #c0392b; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); transform: translateY(-2px); }
+
+        .btn-cancel { background: #95a5a6; color: white; margin-left: 5px; }
+        .btn-cancel:hover { background: #7f8c8d; box-shadow: 0 4px 15px rgba(149, 165, 166, 0.4); transform: translateY(-2px); }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">TurfKick</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+            
+            <div class="nav-links-container">
+                <div class="nav-link active" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</div>
+                <div class="nav-link" onclick="switchTab('turfs')"><i class="fas fa-grass"></i> Turfs</div>
+                <div class="nav-link" onclick="switchTab('bookings')"><i class="fas fa-calendar-check"></i> Bookings</div>
+            </div>
+
+            <div class="logout-container">
+                <a href="api/logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Users Section -->
+            <div id="usersSection" class="section">
+                <div class="card">
+                    <h3>Manage Users</h3>
+                    <div class="table-container">
+                        <table id="userTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Turfs Section -->
+            <div id="turfsSection" class="section hidden">
+                <div class="card">
+                    <h3>Manage Turfs</h3>
+                    <div class="table-container">
+                        <table id="turfTable">
+                            <thead>
+                                <tr>
+                                    <th>Turf Name</th>
+                                    <th>Owner</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Section -->
+            <div id="bookingsSection" class="section hidden">
+                <div class="card">
+                    <h3>All Bookings</h3>
+                    <div class="table-container">
+                        <table id="bookingTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Turf</th>
+                                    <th>Date</th>
+                                    <th>Slot</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            if(tab === 'users') {
+                document.getElementById('usersSection').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+                TurfKickAdmin.fetchUsers();
+            } else if(tab === 'turfs') {
+                document.getElementById('turfsSection').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+                TurfKickAdmin.fetchTurfs();
+            } else if(tab === 'bookings') {
+                document.getElementById('bookingsSection').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+                TurfKickAdmin.fetchBookings();
+            }
+        }
+    </script>
+</body>
+</html>

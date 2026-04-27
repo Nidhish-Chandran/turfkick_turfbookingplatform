@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - TurfKick</title>
+    <style>
+        :root {
+            --primary: #1f4037;
+            --secondary: #99f2c8;
+            --accent: #ffd700;
+            --danger: #ff5f6d;
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1f4037, #2c5364, #0f2027);
+            background-attachment: fixed;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(30px); border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 24px; font-weight: 900; background: linear-gradient(to right, #fff, var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-right { display: flex; gap: 20px; align-items: center; }
+        .owner-badge { background: var(--secondary); color: var(--primary); padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 12px; text-transform: uppercase; }
+
+        /* DASHBOARD LAYOUT */
+        .dashboard-container { width: 90%; max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: 280px 1fr; gap: 40px; }
+
+        /* SIDEBAR NAV */
+        .sidebar { background: var(--glass); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid var(--border); padding: 30px; height: fit-content; position: sticky; top: 100px; }
+        .side-link { padding: 15px 20px; border-radius: 15px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 12px; font-weight: 600; opacity: 0.7; }
+        .side-link:hover, .side-link.active { background: rgba(255,255,255,0.1); opacity: 1; color: var(--secondary); }
+
+        /* CONTENT CARDS */
+        .content-section { display: none; animation: fadeIn 0.5s ease-out forwards; }
+        .content-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid var(--border); padding: 35px; margin-bottom: 30px; }
+        
+        /* FORM ELEMENTS */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; opacity: 0.8; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: #fff; outline: none; transition: var(--transition); box-sizing: border-box; }
+        .form-group input:focus { border-color: var(--secondary); box-shadow: 0 0 10px rgba(153, 242, 200, 0.2); }
+
+        .btn { padding: 12px 25px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .btn-primary { background: var(--secondary); color: var(--primary); }
+        .btn-outline { background: transparent; border: 1px solid #fff; color: #fff; }
+        .btn-danger { background: rgba(255, 95, 109, 0.1); border: 1px solid var(--danger); color: var(--danger); }
+
+        /* BOOKING TABLE */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .data-table th { text-align: left; padding: 15px; border-bottom: 1px solid var(--border); opacity: 0.6; font-size: 14px; }
+        .data-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
+
+        .status-pill { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .pill-upcoming { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+        .pill-completed { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+
+        /* ACCESSORIES LIST */
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+
+        /* SLOT CHIPS */
+        .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
+        .slot-chip { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 12px; 
+            text-align: center; 
+            position: relative; 
+            transition: var(--transition);
+        }
+        .slot-chip:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--secondary); transform: translateY(-3px); }
+        .slot-chip strong { display: block; font-size: 14px; color: var(--secondary); }
+        .slot-chip small { font-size: 11px; opacity: 0.6; }
+        .slot-delete { 
+            position: absolute; top: -8px; right: -8px; 
+            background: var(--danger); color: #fff; 
+            width: 20px; height: 20px; border-radius: 50%; 
+            font-size: 12px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0; transition: 0.3s;
+        }
+        .slot-chip:hover .slot-delete { opacity: 1; top: 5px; right: 5px; }
+
+        /* WEEKLY SCHEDULE */
+        .weekly-container { display: flex; flex-direction: column; gap: 20px; }
+        .day-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 25px; transition: var(--transition); }
+        .day-card.disabled { opacity: 0.4; }
+        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .day-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .day-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .slot-row { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; }
+        .slot-row input { background: transparent; border: none; color: #fff; font-size: 13px; width: 80px; outline: none; }
+        .slot-row input[type="text"] { width: 100%; }
+        
+        .copy-btn { font-size: 11px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--secondary); color: var(--secondary); cursor: pointer; background: transparent; }
+
+        /* MANAGE TABS */
+        .tab-link { opacity: 0.6; cursor: pointer; padding-bottom: 5px; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .tab-link.active { opacity: 1; border-color: var(--secondary); color: var(--secondary); }
+        .manage-tab { display: none; }
+        .manage-tab.active { display: block; }
+
+        /* TURF CARDS */
+        .turf-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: var(--transition); }
+        .turf-card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+        .turf-card img { width: 100%; height: 150px; object-fit: cover; }
+        .turf-card-body { padding: 20px; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { width: 90%; max-width: 500px; background: #1a1a1a; border-radius: 30px; border: 1px solid var(--border); padding: 40px; position: relative; }
+
+        @media (max-width: 900px) {
+            .dashboard-container { grid-template-columns: 1fr; }
+            .sidebar { position: static; flex-direction: row; display: flex; overflow-x: auto; padding: 15px; gap: 10px; }
+            .side-link { margin-bottom: 0; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">TurfKick Owner</div>
+        <div class="nav-right">
+            <span class="owner-badge">Premium Partner</span>
+            <div style="cursor: pointer; opacity: 0.7;" onclick="window.location.href='api/logout.php'">Logout</div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- SIDE NAVIGATION -->
+        <aside class="sidebar">
+            <div class="side-link active" onclick="showSection('my-turfs', this)"><span>🏟️</span> My Turfs</div>
+            <div class="side-link" onclick="showSection('add-turf', this)"><span>➕</span> Add New Turf</div>
+            <div class="side-link" onclick="showSection('bookings', this)"><span>📅</span> All Bookings</div>
+            <div class="side-link" onclick="showSection('equipment', this)"><span>EQ</span> Equipment</div>
+            <div class="side-link" onclick="showSection('feedback', this)"><span>⭐</span> Global Reviews</div>
+            <div class="side-link" onclick="showSection('account', this)"><span>⚙️</span> Settings</div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <!-- MY TURFS LIST -->
+            <section id="my-turfs" class="content-section active">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 style="margin:0;">My Properties</h2>
+                    </div>
+                    <div id="turfListGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                        <!-- Turfs injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADD TURF -->
+            <section id="add-turf" class="content-section">
+                <div class="glass-card">
+                    <h2>Add New Property</h2>
+                    <form id="addTurfForm">
+                        <div class="form-group">
+                            <label>Turf Name</label>
+                            <input type="text" id="add_turfName" placeholder="e.g. Kickers Paradise">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label>Hourly Price (₹)</label>
+                                <input type="number" id="add_turfPrice" value="1200">
+                            </div>
+                            <div class="form-group">
+                                <label>Sport Category</label>
+                                <select id="add_turfSport">
+                                    <option>Football</option>
+                                    <option>Cricket</option>
+                                    <option>Multi-Sport</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Location / Address</label>
+                            <input type="text" id="add_turfLoc" placeholder="City, State">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="add_turfDesc" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Image</label>
+                            <input type="file" id="add_turfImage" accept="image/*">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="TurfKickOwner.addNewTurf()">Create Listing</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- MANAGE SINGLE TURF (DEEP DIVE) -->
+            <section id="manage-turf" class="content-section">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <button class="btn btn-outline" style="font-size: 12px;" onclick="showSection('my-turfs')">← Back to List</button>
+                        <h2 id="managingTurfName" style="margin:0;">Manage Turf</h2>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                        <span class="tab-link active" onclick="switchManageTab('details', this)">Details</span>
+                        <span class="tab-link" onclick="switchManageTab('gallery', this)">Gallery</span>
+                        <span class="tab-link" onclick="switchManageTab('equipment', this)">Equipment</span>
+                        <span class="tab-link" onclick="switchManageTab('slots', this)">Slots</span>
+                        <span class="tab-link" onclick="switchManageTab('maintenance', this)">Maintenance</span>
+                    </div>
+
+                    <!-- Details Tab -->
+                    <div id="tab-details" class="manage-tab active">
+                        <form id="editTurfForm">
+                            <input type="hidden" id="edit_turfId">
+                            <div class="form-group">
+                                <label>Turf Name</label>
+                                <input type="text" id="edit_turfName">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label>Hourly Price</label>
+                                    <input type="number" id="edit_turfPrice" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Sport Category</label>
+                                    <select id="edit_turfSport">
+                                        <option>Football</option>
+                                        <option>Cricket</option>
+                                        <option>Multi-Sport</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Location / Address</label>
+                                <input type="text" id="edit_turfLoc">
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="edit_turfDesc" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Replace Primary Image</label>
+                                <input type="file" id="edit_turfImage" accept="image/*">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="TurfKickOwner.updateTurf()">Save Details</button>
+                        </form>
+                    </div>
+
+                    <!-- Gallery Tab -->
+                    <div id="tab-gallery" class="manage-tab">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="margin:0;">Photo Gallery</h4>
+                            <button class="btn btn-outline" style="font-size: 11px;" onclick="document.getElementById('galleryUploadInput').click()">+ Upload Photos</button>
+                        </div>
+                        <input type="file" id="galleryUploadInput" accept="image/*" multiple style="display:none;" onchange="TurfKickOwner.uploadGalleryImages(this.files)">
+                        <div id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+                            <!-- Images injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Equipment Tab -->
+                    <div id="tab-equipment" class="manage-tab">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="margin:0;">Rental Equipment</h4>
+                            <button class="btn btn-primary" style="font-size: 12px;" onclick="openModal('itemModal')">+ Add Item</button>
+                        </div>
+                        <p style="opacity:0.6; font-size:12px;">Equipment appears to users while booking any of your turfs.</p>
+                        <div id="manageItemList"></div>
+                    </div>
+
+                    <!-- Slots Tab -->
+                    <div id="tab-slots" class="manage-tab">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="margin:0;">Operating Slots</h4>
+                            <p style="opacity: 0.6; font-size: 12px; margin:0;">Define your daily schedule here.</p>
+                        </div>
+                        <div id="manageSlotsList" class="weekly-container">
+                            <!-- Slots/Days injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Tab -->
+                    <div id="tab-maintenance" class="manage-tab">
+                        <div id="maintenanceStatus" style="margin-bottom: 20px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05);">
+                            Current Status: <strong id="currentMStatus">Active</strong>
+                        </div>
+                        <h4>Request Maintenance (Disable Turf)</h4>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="m_startDate">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" id="m_endDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Reason</label>
+                            <textarea id="m_reason" rows="2"></textarea>
+                        </div>
+                        <button class="btn btn-danger" onclick="TurfKickOwner.requestMaintenance()">Submit Maintenance Request</button>
+                        
+                        <hr style="opacity:0.1; margin: 30px 0;">
+                        <h4>Recent Requests</h4>
+                        <div id="m_requestList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ... existing sections ... -->
+
+    <!-- COPY SLOTS MODAL -->
+    <div class="modal" id="copyModal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Copy Schedule</h2>
+            <p id="copySourceText" style="opacity:0.7; font-size:14px; margin-bottom:20px;"></p>
+            
+            <div id="targetDaysList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px;">
+                <!-- Target days injected here -->
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="TurfKickOwner.confirmCopy()">Copy to Selected</button>
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeModal('copyModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+            <!-- BOOKED SLOTS -->
+            <section id="bookings" class="content-section">
+                <div class="glass-card">
+                    <h2>Recent Bookings</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Equipment</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingBody">
+                            <tr>
+                                <td>John Doe</td>
+                                <td>2024-03-22</td>
+                                <td>07:00 PM</td>
+                                <td>Football (1)</td>
+                                <td><span class="status-pill pill-upcoming">Upcoming</span></td>
+                                <td><span style="color: var(--danger); cursor: pointer;" onclick="cancelBooking(this)">Cancel</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mike Ross</td>
+                                <td>2024-03-21</td>
+                                <td>06:00 PM</td>
+                                <td>None</td>
+                                <td><span class="status-pill pill-completed">Completed</span></td>
+                                <td><span style="opacity:0.3;">---</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- EQUIPMENT MANAGEMENT -->
+            <section id="equipment" class="content-section">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2>Manage Accessories</h2>
+                        <button class="btn btn-primary" onclick="openModal('itemModal')">+ Add Item</button>
+                    </div>
+                    
+                    <div id="itemList">
+                        <p style="opacity: 0.5; text-align: center;">Loading equipment...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEEDBACK & COMPLAINTS -->
+            <section id="feedback" class="content-section">
+                <div class="glass-card">
+                    <h2>User Reviews</h2>
+                    <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; width: 100%;">
+                            <span style="color: var(--accent);">⭐⭐⭐⭐⭐</span>
+                            <small>John Doe • 2 days ago</small>
+                        </div>
+                        <p style="margin:0; font-size: 14px; opacity: 0.8;">"Excellent turf quality and great parking space. Will book again!"</p>
+                        <div style="width: 100%; text-align: right;"><span style="color: var(--secondary); font-size: 12px; cursor: pointer;">Reply to review</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="border-color: var(--danger);">
+                    <h2 style="color: var(--danger);">Customer Complaints</h2>
+                    <div class="item-row" style="background: rgba(255, 95, 109, 0.05);">
+                        <div>
+                            <strong>Lighting Issue</strong><br>
+                            <small>By Sarah • 1 day ago</small>
+                            <p style="font-size: 13px; margin-top: 5px;">"The floodlight at the corner was flickering during our slot."</p>
+                        </div>
+                        <button class="btn btn-outline" style="font-size: 12px; border-color: var(--secondary); color: var(--secondary);">Mark Resolved</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACCOUNT SETTINGS -->
+            <section id="account" class="content-section">
+                <div class="glass-card">
+                    <h2>Account & Security</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="profileName" value="Owner Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Business Email</label>
+                            <input type="email" id="profileEmail" value="owner@turfkick.com">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="updateProfile()">Update Account</button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ADD ITEM MODAL -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Add Equipment</h2>
+            <div class="form-group">
+                <label>Item Name</label>
+                <input type="text" id="itemName" placeholder="e.g. Cricket Kit">
+            </div>
+            <div class="form-group">
+                <label>Rental Price (₹)</label>
+                <input type="number" id="itemPrice" placeholder="0">
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="TurfKickOwner.addEquipment()">Add Item</button>
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeModal('itemModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD SLOT MODAL -->
+    <div class="modal" id="slotModal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Add Time Slot</h2>
+            <p style="opacity: 0.6; font-size: 13px; margin-bottom: 20px;">Select the duration for this slot. The label will be generated automatically.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" id="slotStart">
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" id="slotEnd">
+                </div>
+            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="addSlot()">Add Slot</button>
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeModal('slotModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/owner.js"></script>
+    <script>
+        function showSection(id, link) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.side-link').forEach(l => l.classList.remove('active'));
+            
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            
+            if (link) {
+                link.classList.add('active');
+            } else {
+                // Find matching side-link by icon/text if needed, but for now just match by simple logic
+                // Or leave it as is if called programmatically
+            }
+        }
+
+        function cancelBooking(span) {
+            if(confirm("Are you sure you want to cancel this booking? A refund will be initiated.")) {
+                const row = span.closest('tr');
+                row.style.opacity = '0.3';
+                span.innerText = "Cancelled";
+                span.style.pointerEvents = 'none';
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Close modal on backdrop
+        window.onclick = function(e) {
+            if(e.target.className === 'modal') e.target.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

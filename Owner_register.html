@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TurfKick - Owner Registration</title>
+
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #1f4037 0%, #3a7a5c 50%, #99f2c8 100%);
+  --accent: #99f2c8;
+  --accent-dark: #1f4037;
+  --accent-mid: #3a7a5c;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-bg-strong: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --text-white: #ffffff;
+  --text-muted: rgba(255,255,255,0.7);
+  --text-dark: #1f4037;
+  --card-radius: 20px;
+  --btn-radius: 50px;
+  --input-radius: 12px;
+  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.4);
+  --shadow-btn: 0 8px 25px rgba(0, 0, 0, 0.3);
+  --font: 'Segoe UI', 'Inter', sans-serif;
+  --transition: all 0.3s ease;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg-gradient);
+  color: var(--text-white);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #1f4037, #99f2c8); border-radius: 10px; }
+* { scrollbar-width: thin; scrollbar-color: #99f2c8 transparent; }
+
+/* MAIN BOX */
+.wrapper {
+  width: 900px;
+  height: 600px;
+  display: flex;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  background: var(--glass-bg);
+}
+
+/* LEFT IMAGE */
+.left {
+  width: 50%;
+  background: url('https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=2070&auto=format&fit=crop') center/cover;
+  position: relative;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+/* RIGHT FORM */
+.right {
+  width: 50%;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 40px;
+  overflow-y: auto;
+  border-left: 1px solid var(--glass-border);
+}
+
+/* LOGO & TITLE */
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 18px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* FORM STYLES */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: -5px;
+}
+
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--input-radius);
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-white);
+  outline: none;
+  font-size: 15px;
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: var(--text-white);
+  opacity: 0.7;
+}
+
+input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* FILE INPUT */
+input[type="file"] {
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* FILE INPUT PSEUDO-BUTTON STYLING */
+input[type="file"]::file-selector-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  border: 1px solid var(--glass-border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-right: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: bold;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: var(--btn-radius);
+  border: none;
+  background: white;
+  color: var(--accent-dark);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-btn);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* BACK LINK */
+.back {
+  text-align: center;
+  margin-top: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.arrow-symbol {
+  transition: transform 0.3s ease;
+  font-size: 18px;
+  line-height: 0;
+  display: inline-block;
+}
+
+.back:hover .arrow-symbol {
+  transform: translateX(-5px);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- LEFT IMAGE -->
+  <div class="left"></div>
+
+  <!-- RIGHT FORM -->
+  <div class="right">
+
+    <div class="logo">TurfKick</div>
+    <h2>Owner Registration</h2>
+
+    <form id="ownerRegForm">
+      <input type="hidden" name="role" value="owner">
+
+      <input type="text" name="name" placeholder="Owner Name" required>
+      <input type="text" name="turf_name" placeholder="Turf Name" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+      <input type="password" name="password" placeholder="Create Password" required>
+
+      <label>Aadhaar Upload</label>
+      <input type="file" name="aadhaar" class="file" required>
+
+      <label>Turf Operation License</label>
+      <input type="file" name="license" class="file" required>
+
+      <label>Turf Images</label>
+      <input type="file" name="images[]" class="file" multiple required>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <div class="back" onclick="goBack()">
+      <span class="arrow-symbol">&larr;</span> Back to Login
+    </div>
+
+  </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+function goBack(){
+  window.location.href = "index.html";
+}
+
+function validateOwnerForm() {
+  const name     = document.querySelector('input[name="name"]').value.trim();
+  const turfName = document.querySelector('input[name="turf_name"]').value.trim();
+  const email    = document.querySelector('input[name="email"]').value.trim();
+  const password = document.querySelector('input[name="password"]').value;
+  const aadhaar  = document.querySelector('input[name="aadhaar"]').files;
+  const license  = document.querySelector('input[name="license"]').files;
+  const images   = document.querySelector('input[name="images[]"]').files;
+
+  const allowedDocs = ['pdf','jpg','jpeg','png'];
+  const extOf = f => f.name.split('.').pop().toLowerCase();
+
+  if (name.length < 3) {
+    alert("Owner Name must be at least 3 characters.");
+    return false;
+  }
+  if (turfName.length < 3) {
+    alert("Turf Name must be at least 3 characters.");
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert("Please enter a valid email address.");
+    return false;
+  }
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return false;
+  }
+  if (!/[A-Z]/.test(password)) {
+    alert("Password must contain at least one uppercase letter.");
+    return false;
+  }
+  if (!/[0-9]/.test(password)) {
+    alert("Password must contain at least one digit.");
+    return false;
+  }
+  if (!aadhaar.length || !allowedDocs.includes(extOf(aadhaar[0]))) {
+    alert("Aadhaar upload is required and must be a PDF, JPG, or PNG.");
+    return false;
+  }
+  if (!license.length || !allowedDocs.includes(extOf(license[0]))) {
+    alert("Operation License is required and must be a PDF, JPG, or PNG.");
+    return false;
+  }
+  if (!images.length) {
+    alert("Please select at least one Turf Image.");
+    return false;
+  }
+  for (let i = 0; i < images.length; i++) {
+    if (!images[i].type.startsWith('image/')) {
+      alert(`File "${images[i].name}" is not a valid image.`);
+      return false;
+    }
+  }
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  TurfKickAuth.submitForm('ownerRegForm', 'api/register.php', (result) => {
+    alert(result.message);
+    window.location.href = 'index.html';
+  }, validateOwnerForm);
+});
+</script>
+
+</body>
+</html>
