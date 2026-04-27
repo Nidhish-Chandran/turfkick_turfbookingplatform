@@ -11,12 +11,12 @@ $user_id = $_SESSION['user_id'];
 
 try {
     $stmt = $pdo->prepare("
-        SELECT b.*, t.name as turf_name, t.location, t.image_path, ts.slot_label, ts.start_time
-        FROM bookings b
-        JOIN turfs t ON b.turf_id = t.id
-        JOIN time_slots ts ON b.slot_id = ts.id
-        WHERE b.user_id = ?
-        ORDER BY b.booking_date DESC, ts.start_time DESC
+        SELECT b.*, t.name as turf_name, t.location, ts.slot_label 
+        FROM bookings b 
+        JOIN turfs t ON b.turf_id = t.id 
+        JOIN time_slots ts ON b.slot_id = ts.id 
+        WHERE b.user_id = ? 
+        ORDER BY b.booking_date DESC, b.created_at DESC
     ");
     $stmt->execute([$user_id]);
     $bookings = $stmt->fetchAll();

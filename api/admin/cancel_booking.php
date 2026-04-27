@@ -19,7 +19,12 @@ if (!validate_csrf_token($csrf_token)) {
 try {
     $stmt = $pdo->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ?");
     $stmt->execute([$booking_id]);
-    send_json_response('success', 'Booking cancelled by admin.');
+
+    if ($stmt->rowCount() > 0) {
+        send_json_response('success', 'Booking cancelled by administrator.');
+    } else {
+        send_json_response('error', 'Booking not found or already cancelled.');
+    }
 } catch (Exception $e) {
     send_json_response('error', 'Error: ' . $e->getMessage());
 }

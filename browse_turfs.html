@@ -117,10 +117,15 @@
         </div>
 
         <div class="filters">
-            <button class="filter-btn active" onclick="setFilter('all', this)">All Sports</button>
-            <button class="filter-btn" onclick="setFilter('Football', this)">Football</button>
-            <button class="filter-btn" onclick="setFilter('Cricket', this)">Cricket</button>
-            <button class="filter-btn" onclick="setFilter('top', this)">Top Rated</button>
+            <button class="filter-btn active" onclick="TurfKickBookings.setFilter('all', this)">All Sports</button>
+            <button class="filter-btn" onclick="TurfKickBookings.setFilter('Football', this)">Football</button>
+            <button class="filter-btn" onclick="TurfKickBookings.setFilter('Cricket', this)">Cricket</button>
+            
+            <select id="sortSelect" onchange="TurfKickBookings.renderTurfs()" style="background: var(--glass); color: white; border: 1px solid var(--border); border-radius: 50px; padding: 8px 15px; font-size: 13px; outline: none; margin-left: 10px;">
+                <option value="none">Sort By</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+            </select>
         </div>
     </header>
 
@@ -144,14 +149,7 @@
 
                     <h4 style="margin-top: 20px; margin-bottom: 8px;">Rent Equipment</h4>
                     <div id="accStore">
-                        <div class="acc-item">
-                            <span>⚽ Football (Size 5)</span>
-                            <label><input type="checkbox"> +₹50</label>
-                        </div>
-                        <div class="acc-item">
-                            <span>🏏 English Willow Bat</span>
-                            <label><input type="checkbox"> +₹150</label>
-                        </div>
+                        <p style="opacity:0.5; font-size:12px;">Loading equipment...</p>
                     </div>
 
                     <button class="btn btn-main" onclick="bookNow()">Confirm and Pay</button>

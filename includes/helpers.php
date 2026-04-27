@@ -48,18 +48,17 @@ function is_owner() {
 }
 
 /**
- * Check if the user is an admin (based on the admins table logic or role).
- * In this project, admins seem to be in a separate table, but let's assume session role.
+ * Check if the user is an admin.
  */
 function is_admin() {
-    return isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }
 
 /**
  * Block access if not an admin.
  */
 function require_admin() {
-    if (!is_logged_in() || $_SESSION['role'] !== 'admin') {
+    if (!is_admin()) {
         send_json_response('error', 'Access denied. Administrator privileges required.');
     }
 }

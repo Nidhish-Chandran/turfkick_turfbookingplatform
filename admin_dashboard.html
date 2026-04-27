@@ -70,9 +70,11 @@
             <div class="side-link active" onclick="showSection('users', this)">Users</div>
             <div class="side-link" onclick="showSection('turfs', this)">Turfs</div>
             <div class="side-link" onclick="showSection('bookings', this)">Bookings</div>
+            <div class="side-link" onclick="showSection('complaints', this)">Complaints</div>
         </aside>
 
         <main>
+            <!-- Previous sections ... -->
             <section id="users" class="content-section active">
                 <div class="glass-card">
                     <h2>Manage Users</h2>
@@ -126,7 +128,51 @@
                     </table>
                 </div>
             </section>
+
+            <section id="complaints" class="content-section">
+                <div class="glass-card">
+                    <h2>User Complaints</h2>
+                    <table id="complaintTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Turf</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
         </main>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+        <div class="glass-card" style="width:90%; max-width:800px; max-height:90vh; overflow-y:auto; position:relative;">
+            <span onclick="TurfKickAdmin.closeDetailsModal()" style="position:absolute; top:20px; right:20px; cursor:pointer; font-size:24px;">&times;</span>
+            <div id="detailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Complaint Modal -->
+    <div id="complaintModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+        <div class="glass-card" style="width:90%; max-width:600px; position:relative;">
+            <span onclick="document.getElementById('complaintModal').style.display='none'" style="position:absolute; top:20px; right:20px; cursor:pointer; font-size:24px;">&times;</span>
+            <h3>Complaint Details</h3>
+            <div id="complaintContent"></div>
+            <hr>
+            <h4>Respond</h4>
+            <select id="compStatus" style="width:100%; padding:10px; margin-bottom:10px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid var(--border);">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+            <textarea id="compResponse" placeholder="Your response..." style="width:100%; height:100px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid var(--border); padding:10px; margin-bottom:10px;"></textarea>
+            <button class="btn btn-approve" id="updateCompBtn">Update Complaint</button>
+        </div>
     </div>
 
     <script src="js/admin.js"></script>
@@ -140,6 +186,7 @@
             if (id === 'users') TurfKickAdmin.fetchUsers();
             if (id === 'turfs') TurfKickAdmin.fetchTurfs();
             if (id === 'bookings') TurfKickAdmin.fetchBookings();
+            if (id === 'complaints') TurfKickAdmin.fetchComplaints();
         }
     </script>
 </body>
